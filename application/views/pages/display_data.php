@@ -42,11 +42,18 @@
 		    return ($a->popularity > $b->popularity) ? -1 : 1;
 		}
 
-		uasort($playlist, "cmp_pop");
+		/*uasort($playlist, "cmp_pop");
 		//echo "<pre>"; print_r($playlist); echo "</pre>";
 		foreach ($playlist as $track) {
 			echo $track->popularity." - ".$track->name."<br>";
+		}*/
+		$popularity_average = 0;
+		foreach ($playlist as $track) {
+			$popularity_average += $track->popularity;
 		}
+		$popularity_average = $popularity_average / count($playlist);
+		$popularity_average = 100 - round($popularity_average);
+		echo "Hipster rating: $popularity_average";
 	}else{
 		echo "wrong params yo";
 	}

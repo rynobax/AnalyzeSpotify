@@ -9,5 +9,5 @@
 	foreach ($playlists->items as $playlist) {
     echo '<a href="display_data?userid='. $playlist->owner->id .'&playlistid='. $playlist->id .'">' . $playlist->name . '</a> <br>';
 	}
-	echo "<pre>"; print_r($playlists); echo "</pre>";
+	//echo "<pre>"; print_r($playlists); echo "</pre>";
 ?>
