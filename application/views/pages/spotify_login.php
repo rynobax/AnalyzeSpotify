@@ -1,6 +1,11 @@
 <?php
 require 'vendor/autoload.php';
 
+$host  = $_SERVER['HTTP_HOST'];
+$uri  = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
+$extra = 'spotify_login';  // page to redirect to
+$redirecturl = "http://$host$uri/$extra";
+
 $session = new SpotifyWebAPI\Session(
 	'b0b2f940fc9d48a6864eff64a6f73dbe', 
 	'c662a156c62e40ffb90b3c6bb90a8b89', 
