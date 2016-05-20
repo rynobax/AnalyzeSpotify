@@ -9,7 +9,7 @@ $redirecturl = "http://$host$uri/$extra";
 $session = new SpotifyWebAPI\Session(
 	'b0b2f940fc9d48a6864eff64a6f73dbe', 
 	'c662a156c62e40ffb90b3c6bb90a8b89', 
-	'http://localhost/spotifyapp/index.php/pages/view/spotify_login'
+	$redirecturl
 	);
 $api = new SpotifyWebAPI\SpotifyWebAPI();
 
