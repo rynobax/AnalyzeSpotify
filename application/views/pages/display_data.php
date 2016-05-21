@@ -16,6 +16,13 @@
 		return ($a->count > $b->count) ? -1 : 1;
 	}
 
+	function cmp_flw($a, $b) {
+		if ($a->followers == $b->followers) {
+		    return 0;
+		}
+		return ($a->followers > $b->followers) ? -1 : 1;
+	}
+
 	/* Code */
 
 	if (isset($_GET['userid']) && isset($_GET['playlistid'])){

@@ -1,6 +1,6 @@
 <html>
         <head>
-                <title>CodeIgniter Tutorial</title>
+                <title>Spotify Stuff</title>
         </head>
         <body>
 
