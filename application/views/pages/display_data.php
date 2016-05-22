@@ -216,6 +216,10 @@
 			}
 		}
 
+		echo "<pre>";
+		var_dump($month_genre_stats);
+		echo "</pre>";
+
 		$genre_list = array();
 		$count_cutoff = round(count($playlist) * 0.1); 
 		foreach ($month_genre_stats as $date => $stats) {
@@ -226,7 +230,7 @@
 		}
 		timer_ends();
 		print('<br>It took '.timer_calc().' seconds to analyze the months');
-		echo count($genre_list);
+		echo "<br>count: ".count($genre_list);
 		$colors = generate_n_distinct_colors(count($genre_list));
 ?>
 
