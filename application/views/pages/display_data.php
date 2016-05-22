@@ -216,15 +216,11 @@
 			}
 		}
 
-		echo "<pre>";
-		var_dump($month_genre_stats);
-		echo "</pre>";
-
 		$genre_list = array();
 		$count_cutoff = round(count($playlist) * 0.1); 
 		foreach ($month_genre_stats as $date => $stats) {
 			foreach ($stats as $genre => $count) {
-				if($genre != "NO_TAGS" AND $count > $count_cutoff)
+				if($genre != "NO_TAGS" AND $genre_count[$genre] > $count_cutoff)
 					$genre_list[$genre] = true;
 			}
 		}
