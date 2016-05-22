@@ -1,4 +1,4 @@
-<script type="text/javascript" src="/spotifyapp/js/Chart.bundle.js" ></script>
+<script type="text/javascript" src="/js/Chart.bundle.js" ></script>
 <?php
 	include_once './vendor/autoload.php';
 	$this->load->helper('find_genre');
