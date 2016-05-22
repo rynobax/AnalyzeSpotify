@@ -1,3 +1,4 @@
+<script type="text/javascript" src="/spotifyapp/js/Chart.bundle.js" ></script>
 <script type="text/javascript" src="/js/Chart.bundle.js" ></script>
 <?php
 	include_once './vendor/autoload.php';
@@ -225,6 +226,7 @@
 		}
 		timer_ends();
 		print('<br>It took '.timer_calc().' seconds to analyze the months');
+		echo count($genre_list);
 		$colors = generate_n_distinct_colors(count($genre_list));
 ?>
 
