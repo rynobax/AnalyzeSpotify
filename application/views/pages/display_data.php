@@ -1,4 +1,4 @@
-<script type="text/javascript" src="<?php echo base_url();?>js/Chart.bundle.js" ></script>
+<script type="text/javascript" src="/spotifyapp/js/Chart.bundle.js" ></script>
 <?php
 	include_once './vendor/autoload.php';
 	$this->load->helper('find_genre');
@@ -157,7 +157,7 @@
 		foreach ($artists as $artist) {
 			$artist_names[$artist->name] = $artist->name;
 		}
-		$depth = 20;
+		$depth = 10;
 		//echo "<br>Depth is $depth";
 		$artist_genres = get_multiple_genres($artist_names, $depth, 0);
 		//var_dump($artist_genres);
@@ -216,9 +216,10 @@
 		}
 
 		$genre_list = array();
+		$count_cutoff = round(count($playlist) * 0.1); 
 		foreach ($month_genre_stats as $date => $stats) {
 			foreach ($stats as $genre => $count) {
-				if($genre != "NO_TAGS")
+				if($genre != "NO_TAGS" AND $count > $count_cutoff)
 					$genre_list[$genre] = true;
 			}
 		}
