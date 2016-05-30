@@ -1,229 +1,142 @@
-<script type="text/javascript" src="/spotifyapp/js/Chart.bundle.js" ></script>
-<script type="text/javascript" src="/js/Chart.bundle.js" ></script>
+<script type="text/javascript" src="/spotifyapp/assets/js/Chart.bundle.js" ></script>
+<script type="text/javascript" src="assets/js/Chart.bundle.js" ></script>
 <?php
-	include_once './vendor/autoload.php';
-	$this->load->helper('find_genre');
-	$this->load->helper('dates');
-	$this->load->helper('graph');
-	$this->load->helper('data_builder');
-	ini_set('max_execution_time', 0);
-	/* Timer stuff */
-	$tstart = 0;
-	$tend = 0;
+include_once './vendor/autoload.php';
+$this->load->helper('find_genre');
+$this->load->helper('dates');
+$this->load->helper('graph');
+$this->load->helper('data_builder');
+$this->load->helper('timer');
+$this->load->helper('comparison');
 
-	function timer_starts()
-	{
-	global $tstart;
+ini_set('max_execution_time', 0);
 
-	$tstart=microtime(true); ;
+function print_data(){
+    $userid = $_GET['userid'];
+    $playlistid = $_GET['playlistid'];
+    $api = new SpotifyWebAPI\SpotifyWebAPI();
+    $api->setAccessToken($_SESSION["token"]);
+    timer_starts();
+    /* Gets playlist songs */
+    $limit_fields = array('total,limit');
+    $limit_options = array('fields' => $limit_fields);
+    $limit_checker = $api->getUserPlaylistTracks($userid, $playlistid, $limit_options);
+    $song_limit = $limit_checker->limit;
+    $playlist_size = $limit_checker->total;
 
-	}
-
-	function timer_ends()
-	{
-	global $tend;
-
-	$tend=microtime(true); ;
-
-	}
-
-	function timer_calc()
-	{
-	global $tstart,$tend;
-
-	return (round($tend - $tstart,2));
-	}
-
-	/* Comparison functions */
-	function cmp_pop($a, $b) {
-		if ($a->popularity == $b->popularity) {
-		    return 0;
-		}
-		return ($a->popularity > $b->popularity) ? -1 : 1;
-	}
-
-	function cmp_cnt($a, $b) {
-		if ($a->count == $b->count) {
-		    return 0;
-		}
-		return ($a->count > $b->count) ? -1 : 1;
-	}
-
-	function cmp_flw($a, $b) {
-		if ($a->followers == $b->followers) {
-		    return 0;
-		}
-		return ($a->followers > $b->followers) ? -1 : 1;
-	}
-
-	/* Code */
-	if (isset($_GET['userid']) && isset($_GET['playlistid'])){
-		$userid = $_GET['userid'];
-		$playlistid = $_GET['playlistid'];
-		$api = new SpotifyWebAPI\SpotifyWebAPI();
-		$api->setAccessToken($_SESSION["token"]);
-
-		timer_starts();
-		/* Gets playlist songs */
-		$limit_fields = array('total,limit');
-		$limit_options = array('fields' => $limit_fields);
-		$limit_checker = $api->getUserPlaylistTracks($userid, $playlistid, $limit_options);
-		$song_limit = $limit_checker->limit;
-		$playlist_size = $limit_checker->total;
-
-		$playlist = array();
-		$song_count = 0;
-		while($song_count < $playlist_size){
-			$options = array('limit' => $song_limit, 'offset' => $song_count);
-			$playlist_portion = $api->getUserPlaylistTracks($userid, $playlistid, $options);
-			foreach($playlist_portion->items as $item){
-				$track = new stdClass();
-				$track->added_at = $item->added_at;
-				$track->name = $item->track->name;
-				$track->album = $item->track->album->name;
-				$track->artists = array();
-				foreach ($item->track->artists as $artist) {
-					$artist_object = new stdClass();
-					$artist_object->name = $artist->name;
-					$artist_object->id = $artist->id;
-					if($artist->id == NULL) continue;
-					array_push($track->artists, $artist_object);
-				}
-				if(count($track->artists) == 0) continue;
-				$track->popularity = $item->track->popularity;
-				array_push($playlist, $track);
-			}
-			$song_count += $song_limit;
-		}
-		timer_ends();
-		echo('<br>It took '.timer_calc().' seconds to retrieve the get a list of all the playlist songs');
-
-		//echo "<pre>"; print_r($playlist); echo "</pre>";
-		/*uasort($playlist, "cmp_pop");
-		foreach ($playlist as $track) {
-			echo $track->popularity." - ".$track->name."<br>";
-		}*/
-
-		/* Count of each artist */
-		$popularity_average = 0;
-		$artistsnames = array();
-		foreach ($playlist as $track) {
-			$popularity_average += $track->popularity;
-			if(!isset($artistsnames[$track->artists[0]->name])){
-				$artistsnames[$track->artists[0]->name] = new stdClass();
-				$artistsnames[$track->artists[0]->name]->count = 1;
-				$artistsnames[$track->artists[0]->name]->id = $track->artists[0]->id;
-			}else{
-				$artistsnames[$track->artists[0]->name]->count++;
-			}
-		}
-		$popularity_average = $popularity_average / count($playlist);
-		$popularity_average = 100 - round($popularity_average);
-		echo "<br>Hipster rating: $popularity_average <br><br>";
-
-		/* Gets playlist artists */
-		timer_starts();
-		$artist_queue = new SplQueue();
-		foreach($artistsnames as $name => $stats){
-			$artist_queue->push($stats->id);
-		}
-		$artists = array();
-		$total = 0;
-		$query_limit = 50;
-		while(!$artist_queue->isEmpty()){
-			$count = 0;
-			$ids = array();
-			while($count < $query_limit AND !$artist_queue->isEmpty()){
-				array_push($ids, $artist_queue->pop());
-				$count++;
-				$total++;
-			}
-			$artistdata = $api->getArtists($ids);
-			foreach($artistdata->artists as $artist){
-				$a = new stdClass();
-				$a->id = $artist->id;
-				$a->name = $artist->name;
-				$a->popularity = $artist->popularity;
-				$a->followers = $artist->followers->total;
-				$a->count = $artistsnames[$a->name]->count;
-				$artists[$a->name] = $a;
-			}
-			unset($ids); 
-		}
-		timer_ends();
-		print('<br>It took '.timer_calc().' seconds to retrieve the get a list of all the playlist artists');
-
-		/* Get artist genres */
-		timer_starts();
-		$artist_names = array();
-		foreach ($artists as $artist) {
-			$artist_names[$artist->name] = $artist->name;
-		}
-		$depth = 10;
-		$artist_genres = get_multiple_genres($artist_names, $depth, 0);
-		timer_ends();
-		print('<br>It took '.timer_calc().' seconds to retrieve all the genres');
-
-		timer_starts();
-		$genre_count = generate_genre_count($artist_genres, $artists);
-		$month_genre_stats = generate_month_genre_stats($playlist, $artists);
-		$test = 0;
-		$genre_list = generate_genre_list($month_genre_stats, round(count($playlist) * 0.1), $genre_count);
-		//$data = build_percentage_data($month_genre_stats, $genre_list);
-		$data = build_cumulative_data($month_genre_stats, $genre_list);
-		timer_ends();
-		print('<br>It took '.timer_calc().' seconds to analyze the months');
-
-		$colors = generate_n_distinct_colors(count($data));
-?>
-
-<canvas id="myChart" width="400" height="400"></canvas>
-<script>
-var ctx = document.getElementById("myChart");
-var data = {
-	labels : [<?php
-	foreach (end($data) as $date => $stats) {
-		echo '"'.$date.'", ';
-	}
-	?>],
-	datasets : [
-		<?php
-		$monthly_sums = array();
-		foreach ($genre_list as $genre => $ignore) {
-			echo "{\n";
-				echo "\t\tlabel: "."'".ucwords($genre)."',\n";
-				$color = array_pop($colors);
-				echo "\t\tbackgroundColor : \"rgba(".$color['r'].",".$color['g'].",".$color['b'].",1)\",\n";
-				//echo "\t\tstrokeColor : '#ACC26D',\n";
-				//echo "\t\tpointColor : '#fff',\n";
-				//echo "\t\tpointStrokeColor : '#9DB86D',\n";
-				echo "\t\tdata :[";
-				foreach ($data[$genre] as $date => $count) {
-					echo round($count,2).", ";
-				}
-				echo "]\n";
-			echo "\t},";
-		}
-		?>
-	]
-}
-
-var myLineChart = new Chart(ctx, {
-    type: 'line',
-    data: data,
-    options: {
-        scales: {
-            yAxes: [{
-                ticks: {
-                    beginAtZero:true
+    $playlist = array();
+    $song_count = 0;
+    while ($song_count < $playlist_size) {
+        $options = array('limit' => $song_limit, 'offset' => $song_count);
+        $playlist_portion = $api->getUserPlaylistTracks($userid, $playlistid, $options);
+        foreach ($playlist_portion->items as $item) {
+            $track = new stdClass();
+            $date = date_parse($item->added_at);
+            $track->added_at_year = $date["year"];
+            $track->added_at_month = $date["month"];
+            $track->added_at_day = $date["day"];
+            if (!$track->added_at_year OR ! $track->added_at_month OR ! $track->added_at_day) {
+                continue;
+            }
+            $track->name = $item->track->name;
+            $track->album = $item->track->album->name;
+            $track->artists = array();
+            foreach ($item->track->artists as $artist) {
+                $artist_object = new stdClass();
+                $artist_object->name = $artist->name;
+                $artist_object->id = $artist->id;
+                if ($artist->id == NULL) {
+                    continue;
                 }
-            }]
+                array_push($track->artists, $artist_object);
+            }
+            if (count($track->artists) == 0) {
+                continue;
+            }
+            $track->popularity = $item->track->popularity;
+            array_push($playlist, $track);
+        }
+        $song_count += $song_limit;
+    }
+    timer_ends();
+    echo('<br>It took ' . timer_calc() . ' seconds to retrieve the get a list of all the playlist songs');
+
+    /* Count of each artist */
+    $popularity_average = 0;
+    $artistsnames = array();
+    foreach ($playlist as $track) {
+        $popularity_average += $track->popularity;
+        if (!isset($artistsnames[$track->artists[0]->name])) {
+            $artistsnames[$track->artists[0]->name] = new stdClass();
+            $artistsnames[$track->artists[0]->name]->count = 1;
+            $artistsnames[$track->artists[0]->name]->id = $track->artists[0]->id;
+        } else {
+            $artistsnames[$track->artists[0]->name]->count++;
         }
     }
-});
-</script>
-<?php
-	}else{
-		echo "wrong params yo";
-	}
+    $popularity_average = $popularity_average / count($playlist);
+    $popularity_average = 100 - round($popularity_average);
+    echo "<br>Hipster rating: $popularity_average <br><br>";
+
+    /* Gets playlist artists */
+    timer_starts();
+    $artist_queue = new SplQueue();
+    foreach ($artistsnames as $name => $stats) {
+        $artist_queue->push($stats->id);
+    }
+    $artists = array();
+    $total = 0;
+    $query_limit = 50;
+    while (!$artist_queue->isEmpty()) {
+        $count = 0;
+        $ids = array();
+        while ($count < $query_limit AND ! $artist_queue->isEmpty()) {
+            array_push($ids, $artist_queue->pop());
+            $count++;
+            $total++;
+        }
+        $artistdata = $api->getArtists($ids);
+        foreach ($artistdata->artists as $artist) {
+            $a = new stdClass();
+            $a->id = $artist->id;
+            $a->name = $artist->name;
+            $a->popularity = $artist->popularity;
+            $a->followers = $artist->followers->total;
+            $a->count = $artistsnames[$a->name]->count;
+            $artists[$a->name] = $a;
+        }
+        unset($ids);
+    }
+    timer_ends();
+    print('<br>It took ' . timer_calc() . ' seconds to retrieve the get a list of all the playlist artists');
+
+    /* Get artist genres */
+    timer_starts();
+    $artist_names = array();
+    foreach ($artists as $artist) {
+        $artist_names[$artist->name] = $artist->name;
+    }
+    $depth = 15;
+    $artist_genres = get_multiple_genres($artist_names, $depth);
+    timer_ends();
+    print('<br>It took ' . timer_calc() . ' seconds to retrieve all the genres');
+
+    timer_starts();
+    $genre_count = generate_genre_count($artist_genres, $artists);
+    $month_genre_stats = generate_month_genre_stats($playlist, $artists);
+    $genre_list = generate_genre_list($month_genre_stats, round(count($artists) * 0.1), $genre_count);
+    $data1 = build_percentage_data($month_genre_stats, $genre_list);
+    $data2 = build_cumulative_data($month_genre_stats, $genre_list);
+    $data3 = build_line_data($month_genre_stats, $genre_list);
+    generate_solid_line_graph_html(1, $data1, $genre_list);
+    generate_solid_line_graph_html(2, $data2, $genre_list);
+    generate_line_graph_html(3, $data3, $genre_list);
+}
+
+/* First Executed Code */
+if (isset($_GET['userid']) && isset($_GET['playlistid'])) {
+    print_data();
+} else {
+    echo "wrong params yo";
+}
 ?>
