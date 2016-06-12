@@ -2,11 +2,10 @@
 <html>
 	<?php
 	if(isset($_ENV["SERVER_NAME"])){
-		$base = $_ENV["SERVER_NAME"];
+		$base = "";
 	}else{
 		$base = base_url();
 	}
-	echo "base is ".$base;
 	?>
     <script type="text/javascript" src="<?php echo $base.'assets/js/Chart.bundle.js'; ?>"></script>
     <script type="text/javascript" src="<?php echo $base.'assets/js/jQuery-1.12.4.min.js'; ?>"></script>
