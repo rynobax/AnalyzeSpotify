@@ -29,6 +29,7 @@ Algorithm for Determining Genres
 
 Because there are so many subgenres, I established a list of "valid" genres.
 To determine the genre of a specific artist, the following steps are taken:
+
 -  Look up the artist's top tags on Last.fm.
 -  Starting with the most popular tag, check if it is a valid genre.
 -  If a valid tag is found, that is considered the artist's genre.
