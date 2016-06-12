@@ -2,9 +2,9 @@
 $uri  = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
 if(isset($_ENV["SERVER_NAME"])){
 	if($uri != "/spotifyapp/index.php/pages"){
-		$base = "";
+		$base = "index.php/pages";
 	}else{
-		$base = "spotifyapp/index.php";
+		$base = "/";
 	}
 }else{
 	if($uri != "/spotifyapp/index.php/pages"){
