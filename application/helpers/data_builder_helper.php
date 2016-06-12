@@ -193,6 +193,9 @@ function generate_solid_line_graph_html($graph_num, $data, $genre_list) {
                               labelString: 'Month'
                             },
                     }]
+                },
+                tooltips: {
+                    enabled: false
                 }
             }
         });
@@ -206,13 +209,6 @@ function generate_line_graph_html($graph_num, $data, $genre_list) {
     ?>
     <canvas id="<?php echo $graph_name ?>" width="400" height="400"></canvas>
     <script>
-        Chart.defaults.global.hover.onHover = function (x) {
-            if (x[0]) {
-                var index = x[0]._index;
-                // Place here your code
-                alert("Attention");
-            }
-        };
         var ctx = document.getElementById("<?php echo $graph_name ?>");
         var data = {
             labels: [<?php

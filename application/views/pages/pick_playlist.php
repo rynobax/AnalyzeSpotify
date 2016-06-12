@@ -9,6 +9,7 @@
 <div class="container">
   <div class="jumbotron" style="text-align: center">
 	<h1><b>Pick a Playlist:</b></h1>
+	<hr>
 	<?php
 		include_once './vendor/autoload.php';
 
@@ -65,6 +66,22 @@
 
 			<?php $i++; ?>
 		<?php }
+		if($i%2 == 1){
+				echo $bs_div_end;
+		}
+		?>
+		<hr>
+		<div class="row">
+			<div class="col-sm-12">
+		        <form action="home" method="post" id="logout-form">
+					<input type="hidden" name="logout" value="true">
+				</form>
+				<button class="btn btn-danger btn-lg" type="submit" form="logout-form">
+		          <span class="glyphicon glyphicon-log-out"></span> Log out
+		        </button>
+		    </div>
+		</div>
+		<?php
 		}else{
 			$host  = $_SERVER['HTTP_HOST'];
 			$uri  = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');

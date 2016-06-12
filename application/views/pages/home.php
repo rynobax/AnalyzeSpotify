@@ -9,7 +9,9 @@ if(isset($_ENV["SERVER_NAME"])){
 $action_spotify = $base."index.php/pages/view/spotify_login";
 $action_dummy = $base."index.php/pages/view/dummy";
 
-if(isset($_SESSION["token"])){
+if(isset($_POST["logout"])) {
+	session_destroy();
+}elseif(isset($_SESSION["token"])) {
 	$url = $action_spotify;
 	echo $url;
 	header("Location: $url");

@@ -41,6 +41,7 @@
 $(function(){
     var response = $.get('<?php echo "display_data?userid=". $userid ."&playlistid=". $playlistid . "&playlistname=".$playlistname ?>', null, function(resp) {
   		document.write( resp );
+  		console.log(resp);
 	})
   	.fail(function() {
     	document.write("An error occured.  Redirecting in 5 seconds.");
