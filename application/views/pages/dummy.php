@@ -8,18 +8,14 @@
     </head>
     <body>
 
-        <style>
+<style>
 .jumbotron {
     padding-top: 12px;
 }
+.tab-content{
+    min-height: 600px;
+}
 </style>
-
-<!-- Fixes screen jumping when clicking tabs -->
-<script type="text/javascript">
-    $('.nav-tabs li a').click( function(e) {
-    history.pushState( null, null, $(this).attr('href') );
-    });
-</script>
 
 <div class="container">
     <div class="jumbotron" style="text-align: center">
