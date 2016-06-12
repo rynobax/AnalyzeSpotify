@@ -19,6 +19,11 @@
 	$playlistid = $_POST["playlistid"];
 	$playlistname = $_POST["playlistname"];
 	/* fail out if these arent set */
+	if(isset($_ENV["SERVER_NAME"])){
+		$base = "/";
+	}else{
+		$base = base_url();
+	}
 ?>
 <style>
 .img-responsive {
@@ -28,14 +33,12 @@
 <div class="container">
     <div class="jumbotron" style="text-align: center">
 	Statistics are being calculated, please wait.<br>
-	<img src="<?php echo base_url("assets/images/loading-cropped.gif"); ?>" class="img-responsive" alt="Loading">
+	<img src="<?php echo $base."assets/images/loading-cropped.gif"; ?>" class="img-responsive" alt="Loading">
 	</div>
 </div>
 <body>
- <!-- Include jQuery here! Also have the loading animation here. -->
 <script type="text/javascript">
 $(function(){
-
     var response = $.get('<?php echo "display_data?userid=". $userid ."&playlistid=". $playlistid . "&playlistname=".$playlistname ?>', null, function(resp) {
   		document.write( resp );
 	})
@@ -46,8 +49,12 @@ $(function(){
 	        window.location.href = "pick_playlist";
     	}, 5000);
   	});
-
 });
+</script>
+<script type="text/javascript">
+    $('.nav-tabs li a').click( function(e) {
+    history.pushState( null, null, $(this).attr('href') );
+    });
 </script>
 <?php
 }

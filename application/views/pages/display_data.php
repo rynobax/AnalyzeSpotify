@@ -5,7 +5,7 @@
 </style>
 
 <!-- Fixes screen jumping when clicking tabs -->
-<script>
+<script type="text/javascript">
     $('.nav-tabs li a').click( function(e) {
     history.pushState( null, null, $(this).attr('href') );
     });

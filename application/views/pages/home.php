@@ -1,12 +1,26 @@
 <?php
 $uri  = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
 if(isset($_ENV["SERVER_NAME"])){
-	$base = "/";
+	if($uri != "/spotifyapp/index.php/pages"){
+		$base = "";
+	}else{
+		$base = "spotifyapp/index.php";
+	}
 }else{
-	$base = base_url();
+	if($uri != "/spotifyapp/index.php/pages"){
+		$base = base_url("index.php/pages");
+	}else{
+		$base = base_url("/");
+	}
 }
-$action_spotify = $base."index.php/pages/view/spotify_login";
-$action_dummy = $base."index.php/pages/view/dummy_login";
+$action_spotify = $base."/view/spotify_login";
+$action_dummy = $base."/view/dummy_login";
+
+if(isset($_SESSION["token"])){
+	$url = $action_spotify;
+	echo $url;
+	header("Location: $url");
+}
 ?>
 
 <style>
