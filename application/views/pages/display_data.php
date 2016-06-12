@@ -2,11 +2,20 @@
 .jumbotron {
     padding-top: 12px;
 }
-.tab-content{
-    min-height: 600px;
-}
 </style>
+<script type="text/javascript">
+    function resize_graphs(){
+        var h1 = $('#graph1').height();
+        var h2 = $('#graph2').height();
+        var h3 = $('#graph3').height();
+        var height = Math.max(h1, h2, h3);
 
+        for (var i = 1; i <= 3; i++) {
+            $('#graph'+i).height(height);
+        }
+    }
+    $(window).resize(resize_graphs);
+</script>
 <div class="container">
     <div class="jumbotron" style="text-align: center">
 <?php

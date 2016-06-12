@@ -42,6 +42,15 @@ $(function(){
     var response = $.get('<?php echo "display_data?userid=". $userid ."&playlistid=". $playlistid . "&playlistname=".$playlistname ?>', null, function(resp) {
   		document.write( resp );
   		console.log(resp);
+
+        var h1 = $('#graph1').height();
+        var h2 = $('#graph2').height();
+        var h3 = $('#graph3').height();
+        var height = Math.max(h1, h2, h3);
+
+        for (var i = 1; i <= 3; i++) {
+            $('#graph'+i).height(height);
+        }
 	})
   	.fail(function() {
     	document.write("An error occured.  Redirecting in 5 seconds.");
