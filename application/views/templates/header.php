@@ -2,7 +2,7 @@
 <html>
 	<?php
 	if(isset($_ENV["SERVER_NAME"])){
-		$base = "";
+		$base = "/";
 	}else{
 		$base = base_url();
 	}
