@@ -8,7 +8,7 @@
 	}
 	?>
     <script type="text/javascript" src="<?php echo $base.'assets/js/Chart.bundle.js'; ?>"></script>
-    <script type="text/javascript" src="<?php echo $base.'assets/js/jQuery-1.12.4.min.js'; ?>"></script>
+    <script type="text/javascript" src="<?php echo $base.'assets/js/jquery-1.12.4.min.js'; ?>"></script>
     <script type="text/javascript" src="<?php echo $base.'assets/js/bootstrap.js'; ?>"></script>
     <link rel="stylesheet" href="<?php echo $base.'assets/css/bootstrap.css' ?>" />
     <head>
