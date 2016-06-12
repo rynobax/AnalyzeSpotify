@@ -179,7 +179,7 @@ function print_data(){
     $data3 = build_line_data($month_genre_stats, $genre_list);
     ?>
     <hr>
-    <h2><b>Graphs</b></h2>
+    <h2><b>HistoricalGraphs</b></h2>
     These graphs show the distribution of what genre of songs you have been adding to the playlist each month.
     <ul class="nav nav-tabs">
         <li class="active">

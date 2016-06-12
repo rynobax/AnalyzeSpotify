@@ -1,70 +1,36 @@
 ###################
-What is CodeIgniter
+Spotify Playlist Analyzer
 ###################
 
-CodeIgniter is an Application Development Framework - a toolkit - for people
-who build web sites using PHP. Its goal is to enable you to develop projects
-much faster than you could if you were writing code from scratch, by providing
-a rich set of libraries for commonly needed tasks, as well as a simple
-interface and logical structure to access these libraries. CodeIgniter lets
-you creatively focus on your project by minimizing the amount of code needed
-for a given task.
+Spotify Playlist Analyzer is a PHP web application that gives user's 
+insight into the genre's of the songs in a playlist, and how it has
+changed over time.
+
+The website is running on Heroku `here <http://stormy-journey-96158.herokuapp.com/index.php/pages/view/>`_.
 
 *******************
-Release Information
+Technologies Used
 *******************
 
-This repo contains in-development code for future releases. To download the
-latest stable release please visit the `CodeIgniter Downloads
-<https://codeigniter.com/download>`_ page.
-
-**************************
-Changelog and New Features
-**************************
-
-You can find a list of all changes for each release in the `user
-guide change log <https://github.com/bcit-ci/CodeIgniter/blob/develop/user_guide_src/source/changelog.rst>`_.
+This application was built using the CodeIgniter Framework.  PHP and jquery 
+were used to process the data, and Twitter Bootstrap and 
+Chart.js were used to display the results in a pleasing way.
 
 *******************
-Server Requirements
+API's Used
 *******************
 
-PHP version 5.4 or newer is recommended.
+-  `Spotify API <https://developer.spotify.com/web-api/>`_
+-  `Last.fm API <http://www.last.fm/api>`_
 
-It should work on 5.2.4 as well, but we strongly advise you NOT to run
-such old versions of PHP, because of potential security and performance
-issues, as well as missing features.
+*******************
+Algorithm for Determining Genres
+*******************
 
-************
-Installation
-************
-
-Please see the `installation section <https://codeigniter.com/user_guide/installation/index.html>`_
-of the CodeIgniter User Guide.
-
-*******
-License
-*******
-
-Please see the `license
-agreement <https://github.com/bcit-ci/CodeIgniter/blob/develop/user_guide_src/source/license.rst>`_.
-
-*********
-Resources
-*********
-
--  `User Guide <https://codeigniter.com/docs>`_
--  `Language File Translations <https://github.com/bcit-ci/codeigniter3-translations>`_
--  `Community Forums <http://forum.codeigniter.com/>`_
--  `Community Wiki <https://github.com/bcit-ci/CodeIgniter/wiki>`_
--  `Community IRC <https://webchat.freenode.net/?channels=%23codeigniter>`_
-
-Report security issues to our `Security Panel <mailto:security@codeigniter.com>`_
-or via our `page on HackerOne <https://hackerone.com/codeigniter>`_, thank you.
-
-***************
-Acknowledgement
-***************
-
-The CodeIgniter team would like to thank EllisLab, all the
-contributors to the CodeIgniter project and you, the CodeIgniter user.
+Because there are so many subgenres, I established a list of "valid" genres.
+To determine the genre of a specific artist, the following steps are taken:
+-  Look up the artist's top tags on Last.fm.
+-  Starting with the most popular tag, check if it is a valid genre.
+-  If a valid tag is found, that is considered the artist's genre.
+-  If none of the tags that are > 33% popularity are valid, look up a list of related artists from Last.fm.
+-  Starting with the most similar artist, repeat the previous steps until a valid genre is found.

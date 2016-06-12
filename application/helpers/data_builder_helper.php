@@ -256,10 +256,6 @@ function generate_line_graph_html($graph_num, $data, $genre_list) {
                               labelString: 'Month'
                             },
                     }]
-                },
-                title: {
-                    display: false,
-                    text: 'Custom Chart Title'
                 }
             }
         });
