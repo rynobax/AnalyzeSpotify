@@ -1,11 +1,12 @@
 <?php
 $uri  = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
-$action_spotify = "spotify_login";
-$action_dummy = "dummy_login";
-if($uri != "/spotifyapp/index.php/pages"){
-	$action_spotify = "/spotifyapp/index.php/pages/view/spotify_login";
-	$action_dummy = "/spotifyapp/index.php/pages/view/dummy_login";
+if(isset($_ENV["SERVER_NAME"])){
+	$base = "/";
+}else{
+	$base = base_url();
 }
+$action_spotify = $base."index.php/pages/view/spotify_login";
+$action_dummy = $base."index.php/pages/view/dummy_login";
 ?>
 
 <style>
