@@ -8,13 +8,13 @@ if(isset($_ENV["SERVER_NAME"])){
 	}
 }else{
 	if($uri != "/spotifyapp/index.php/pages"){
-		$base = base_url("index.php/pages");
+		$base = base_url("/pages");
 	}else{
 		$base = base_url("/");
 	}
 }
 $action_spotify = $base."/view/spotify_login";
-$action_dummy = $base."/view/dummy_login";
+$action_dummy = $base."/view/dummy";
 
 if(isset($_SESSION["token"])){
 	$url = $action_spotify;
