@@ -36,6 +36,3 @@ if($uri != "/spotifyapp/index.php/pages"){
 	</button>
 	</div>
 </div>
-<?php
-var_dump($_ENV);
-?>

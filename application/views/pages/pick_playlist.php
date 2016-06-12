@@ -27,10 +27,11 @@
 				'c662a156c62e40ffb90b3c6bb90a8b89', 
 				$redirecturl
 			);
-			$session->refreshAccessToken($_SESSION["refresh-token"]);
+			$session->refreshAccessToken($_SESSION["refresh_token"]);
 			$accessToken = $session->getAccessToken();
 			$api->setAccessToken($accessToken);
 			$_SESSION["token"] = $accessToken;
+			$playlists = $api->getMyPlaylists();
 		}
 
 
