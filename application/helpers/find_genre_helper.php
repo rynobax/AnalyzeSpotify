@@ -148,7 +148,7 @@ function recurse_for_untagged(&$artists, $untagged_artists, $searchfors, $max_de
         return;
     } else {
         foreach($untagged_artists as $artist => $genre){
-            echo "<br>no tag for ".$artist;
+            //echo "<br>no tag for ".$artist;
             $artists[$artist] = "NO_TAGS";
         }
         return;
@@ -190,6 +190,7 @@ function get_multiple_related_artists($artists, $max) {
 
 function generate_genre_count($artist_genres, $artists) {
     $genre_count = array();
+    $total = 0;
     foreach ($artist_genres as $artist_name => $genre) {
         $artist = $artists[$artist_name];
         $artist->genre = $genre;
@@ -198,19 +199,15 @@ function generate_genre_count($artist_genres, $artists) {
         } else {
             $genre_count[$genre] += $artist->count;
         }
+        $total += $genre_count[$genre];
     }
-
-    arsort($genre_count);
-    echo "<table>";
-    echo "<tr>";
-    echo "<th>Genre</th><th>Count</th><th>Percentage</th>";
-    echo "</tr>";
-    foreach ($genre_count as $genre => $count) {
-        echo "<tr><td>" . ucwords($genre) . "</td><td>" . $count . "</td><td>" . $count / count($artists) . "</td></tr>";
-    }
-    echo "</table>";
 
     return $genre_count;
+}
+
+function my_ucwords($word){
+    if($word == "NO_TAGS") return "No Genre Found";
+    return ucwords($word);
 }
 
 ?>

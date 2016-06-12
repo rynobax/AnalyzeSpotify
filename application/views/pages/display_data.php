@@ -1,5 +1,18 @@
-<script type="text/javascript" src="/spotifyapp/assets/js/Chart.bundle.js" ></script>
-<script type="text/javascript" src="assets/js/Chart.bundle.js" ></script>
+<style>
+.jumbotron {
+    padding-top: 12px;
+}
+</style>
+
+<!-- Fixes screen jumping when clicking tabs -->
+<script>
+    $('.nav-tabs li a').click( function(e) {
+    history.pushState( null, null, $(this).attr('href') );
+    });
+</script>
+
+<div class="container">
+    <div class="jumbotron" style="text-align: center">
 <?php
 include_once './vendor/autoload.php';
 $this->load->helper('find_genre');
@@ -14,8 +27,12 @@ ini_set('max_execution_time', 0);
 function print_data(){
     $userid = $_GET['userid'];
     $playlistid = $_GET['playlistid'];
+    $playlistname = $_GET['playlistname'];
     $api = new SpotifyWebAPI\SpotifyWebAPI();
     $api->setAccessToken($_SESSION["token"]);
+
+    echo "<h1><b>".$playlistname."</b></h1>";
+    echo "<hr size=>";
     timer_starts();
     /* Gets playlist songs */
     $limit_fields = array('total,limit');
@@ -59,7 +76,6 @@ function print_data(){
         $song_count += $song_limit;
     }
     timer_ends();
-    echo('<br>It took ' . timer_calc() . ' seconds to retrieve the get a list of all the playlist songs');
 
     /* Count of each artist */
     $popularity_average = 0;
@@ -75,8 +91,11 @@ function print_data(){
         }
     }
     $popularity_average = $popularity_average / count($playlist);
-    $popularity_average = 100 - round($popularity_average);
-    echo "<br>Hipster rating: $popularity_average <br><br>";
+    $hipster_rating = 100 - round($popularity_average);
+    echo "<h4><b>Hipster rating: $hipster_rating / 100</b></h4>";
+    echo "The hipster rating is based on the popularity of the playlist's tracks on spotify.";
+    echo "<hr>";
+    //echo('<br>It took ' . timer_calc() . ' seconds to retrieve the get a list of all the playlist songs');
 
     /* Gets playlist artists */
     timer_starts();
@@ -108,7 +127,7 @@ function print_data(){
         unset($ids);
     }
     timer_ends();
-    print('<br>It took ' . timer_calc() . ' seconds to retrieve the get a list of all the playlist artists');
+    //print('<br>It took ' . timer_calc() . ' seconds to retrieve the get a list of all the playlist artists');
 
     /* Get artist genres */
     timer_starts();
@@ -119,18 +138,70 @@ function print_data(){
     $depth = 15;
     $artist_genres = get_multiple_genres($artist_names, $depth);
     timer_ends();
-    print('<br>It took ' . timer_calc() . ' seconds to retrieve all the genres');
+    //print('<br>It took ' . timer_calc() . ' seconds to retrieve all the genres');
 
     timer_starts();
+
+    /* This function counts how many songs in the playlist are of each genre */
     $genre_count = generate_genre_count($artist_genres, $artists);
+
+    /* Print table of genres */
+    arsort($genre_count);
+    ?>
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>Genre</th><th>Count</th><th>Percentage</th>
+            </tr>
+        </thead>
+        <tbody>
+        <?php
+        foreach ($genre_count as $genre => $count) {
+            echo "<tr class=\"active\"><td>" . my_ucwords($genre) . "</td><td>" . $count . "</td><td>" . round($count / count($playlist),2) . "</td></tr>";
+        }?>
+        </tbody>
+    </table>
+    <?php
+    /* Calculate the number of songs for each genre added to the playlist each month */
     $month_genre_stats = generate_month_genre_stats($playlist, $artists);
-    $genre_list = generate_genre_list($month_genre_stats, round(count($artists) * 0.1), $genre_count);
+
+    /* Decides which genres should be shown on the graph */
+    $genre_list = generate_genre_list($month_genre_stats, round(count($playlist) * 0.1), $genre_count);
+
+    /* Build and draw the graphs */
     $data1 = build_percentage_data($month_genre_stats, $genre_list);
     $data2 = build_cumulative_data($month_genre_stats, $genre_list);
     $data3 = build_line_data($month_genre_stats, $genre_list);
-    generate_solid_line_graph_html(1, $data1, $genre_list);
-    generate_solid_line_graph_html(2, $data2, $genre_list);
-    generate_line_graph_html(3, $data3, $genre_list);
+    ?>
+    <hr>
+    <h2><b>Graphs</b></h2>
+    These graphs show the distribution of what genre of songs you have been adding to the playlist each month.
+    <ul class="nav nav-tabs">
+        <li class="active">
+            <a href="#graph1" data-toggle="tab" aria-expanded="true">Percentage Area Graph</a>
+        </li>
+        <li class="">
+            <a href="#graph2" data-toggle="tab" aria-expanded="true">Total Area Graph</a>
+        </li>
+        <li class="">
+            <a href="#graph3" data-toggle="tab" aria-expanded="true">Line Graph</a>
+        </li>
+    </ul>
+    <div id="graphTabs" class="tab-content">
+        <div class="tab-pane fade active in" id="graph1">
+            <?php generate_solid_line_graph_html(1, $data1, $genre_list); ?>
+        </div>
+        <div class="tab-pane fade in" id="graph2">
+            <?php generate_solid_line_graph_html(2, $data2, $genre_list); ?>
+        </div>
+        <div class="tab-pane fade in" id="graph3">
+            <?php generate_line_graph_html(3, $data3, $genre_list); ?>
+        </div>
+    </div>
+    
+    
+    
+<?php
 }
 
 /* First Executed Code */
@@ -140,3 +211,5 @@ if (isset($_GET['userid']) && isset($_GET['playlistid'])) {
     echo "wrong params yo";
 }
 ?>
+    </div>
+</div>

@@ -142,8 +142,8 @@ function build_line_data($month_genre_stats, $genre_list) {
     return $data;
 }
 
-function generate_solid_line_graph_html($graph_num, $data, $genre_list){
-    $graph_name = "myChart".$graph_num;
+function generate_solid_line_graph_html($graph_num, $data, $genre_list) {
+    $graph_name = "myChart" . $graph_num;
     $colors = generate_n_distinct_colors(count($data));
     ?>
     <canvas id="<?php echo $graph_name ?>" width="400" height="400"></canvas>
@@ -179,10 +179,20 @@ function generate_solid_line_graph_html($graph_num, $data, $genre_list){
             options: {
                 scales: {
                     yAxes: [{
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Number of Songs Added'
+                            },
                             ticks: {
                                 beginAtZero: true
                             }
-                        }]
+                        }],
+                    xAxes: [{
+                            scaleLabel: {
+                              display: true,
+                              labelString: 'Month'
+                            },
+                    }]
                 }
             }
         });
@@ -190,12 +200,19 @@ function generate_solid_line_graph_html($graph_num, $data, $genre_list){
     <?php
 }
 
-function generate_line_graph_html($graph_num, $data, $genre_list){
-    $graph_name = "myChart".$graph_num;
+function generate_line_graph_html($graph_num, $data, $genre_list) {
+    $graph_name = "myChart" . $graph_num;
     $colors = generate_n_distinct_colors(count($data));
     ?>
     <canvas id="<?php echo $graph_name ?>" width="400" height="400"></canvas>
     <script>
+        Chart.defaults.global.hover.onHover = function (x) {
+            if (x[0]) {
+                var index = x[0]._index;
+                // Place here your code
+                alert("Attention");
+            }
+        };
         var ctx = document.getElementById("<?php echo $graph_name ?>");
         var data = {
             labels: [<?php
@@ -209,9 +226,8 @@ function generate_line_graph_html($graph_num, $data, $genre_list){
         echo "{\n";
         echo "\t\tlabel: " . "'" . ucwords($genre) . "',\n";
         $color = array_pop($colors);
-        //echo "\t\tbackgroundColor : \"rgba(" . $color['r'] . "," . $color['g'] . "," . $color['b'] . ",1)\",\n";
+        echo "\t\tbackgroundColor : \"rgba(" . $color['r'] . "," . $color['g'] . "," . $color['b'] . ",1)\",\n";
         echo "\t\tborderColor : \"rgba(" . $color['r'] . "," . $color['g'] . "," . $color['b'] . ",1)\",\n";
-       // echo "\t\tpointHoverBorderColor : ";
         echo "\t\tfill : false,\n";
         echo "\t\tdata :[";
         foreach ($data[$genre] as $date => $count) {
@@ -230,15 +246,28 @@ function generate_line_graph_html($graph_num, $data, $genre_list){
             options: {
                 scales: {
                     yAxes: [{
+                            scaleLabel: {
+                              display: true,
+                              labelString: 'Number of Songs Added'
+                            },
                             ticks: {
                                 beginAtZero: true
                             }
-                        }]
+                        }],
+                    xAxes: [{
+                            scaleLabel: {
+                              display: true,
+                              labelString: 'Month'
+                            },
+                    }]
+                },
+                title: {
+                    display: false,
+                    text: 'Custom Chart Title'
                 }
             }
         });
     </script>
     <?php
 }
-
 ?>

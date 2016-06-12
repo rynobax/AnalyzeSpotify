@@ -3,7 +3,7 @@ require 'vendor/autoload.php';
 
 $host  = $_SERVER['HTTP_HOST'];
 $uri  = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
-$extra = 'spotify_login';  // page to redirect to
+$extra = 'spotify_login';
 $redirecturl = "http://$host$uri/$extra";
 
 $session = new SpotifyWebAPI\Session(
@@ -16,14 +16,11 @@ $api = new SpotifyWebAPI\SpotifyWebAPI();
 if (isset($_GET['code'])) {
     $session->requestAccessToken($_GET['code']);
     $api->setAccessToken($session->getAccessToken());
-
     $_SESSION['token'] = $session->getAccessToken();
-
+    $_SESSION['refresh_token'] = $session->getRefreshToken();
     $api = new SpotifyWebAPI\SpotifyWebAPI();
 
-    $host  = $_SERVER['HTTP_HOST'];
-	$uri  = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
-	$extra = 'pick_playlist';  // page to redirect to
+    $extra = 'pick_playlist';  // page to redirect to
 
 	header("Location: http://$host$uri/$extra");
 } else {
