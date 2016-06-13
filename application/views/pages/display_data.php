@@ -150,36 +150,82 @@ function print_data(){
     /* This function counts how many songs in the playlist are of each genre */
     $genre_count = generate_genre_count($artist_genres, $artists);
 
-    /* Print table of genres */
-    arsort($genre_count);
-    ?>
-    <table class="table table-striped table-hover">
-        <thead>
-            <tr>
-                <th>Genre</th><th>Count</th><th>Percentage</th>
-            </tr>
-        </thead>
-        <tbody>
-        <?php
-        foreach ($genre_count as $genre => $count) {
-            echo "<tr class=\"active\"><td>" . my_ucwords($genre) . "</td><td>" . $count . "</td><td>" . round($count / count($playlist),2) . "</td></tr>";
-        }?>
-        </tbody>
-    </table>
-    <?php
     /* Calculate the number of songs for each genre added to the playlist each month */
     $month_genre_stats = generate_month_genre_stats($playlist, $artists);
 
-    /* Decides which genres should be shown on the graph */
-    $genre_list = generate_genre_list($month_genre_stats, round(count($playlist) * 0.1), $genre_count);
+    /* Decides which genres should be shown on the historic graphs */
+    $historic_genre_list = generate_genre_list($month_genre_stats, round(count($playlist) * 0.1), $genre_count);
 
+    $data_pie = build_pie_data($genre_count, round(count($playlist) * 0.1));
+
+    arsort($genre_count);
+    $color_count = 64;  // Number of colors we generate
+    $colors = generate_n_distinct_colors($color_count);
+    $initial_offset = 0;
+    $jump_size = round($color_count / count($historic_genre_list), 0); // How much should be jumped to get a new color each time
+    $rotate_size = round($jump_size / round((count($genre_count) + 1) / count($historic_genre_list)), 0); // When we reach the end, reset, jump by this much, then jump by jump_size repeatedly
+    $GLOBALS["colors"] = array();
+    $n = $initial_offset;
+    foreach ($historic_genre_list as $genre => $ignore) {
+        $GLOBALS["colors"][$genre] = $colors[$n];
+        $n += $jump_size;
+    }
+    $n -= $color_count;
+    $n += $rotate_size;
+    foreach ($genre_count as $genre => $count) {
+        if(!isset($GLOBALS["colors"][$genre])){
+            $GLOBALS["colors"][$genre] = $colors[$n];
+            $n += $jump_size;
+            if($n >= $color_count){
+                $n -= $color_count;
+                $n += $rotate_size;
+            }
+        }
+    }
+
+
+    /* Print table of genres */
+    if(isset($genre_count["NO_TAGS"])){
+        $no_tags_count = $genre_count["NO_TAGS"];
+        unset($genre_count["NO_TAGS"]);
+    }else{
+        $no_tags_count = 0;
+    }?>
+    <div class="row">
+        <div class="col-xs-6">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Genre</th>
+                            <th>Song Count</th>
+                        </tr>
+                    </thead>
+                <?php foreach ($genre_count as $genre => $count) {?>
+                    <tr bgcolor="<?php color_print($GLOBALS["colors"][$genre]); ?>">
+                        <td>
+                            <font color="black"><b><?php echo ucwords($genre); ?></b></font>
+                        </td>
+                        <td>
+                            <font color="black"><?php echo $count ?></font>
+                        </td>
+                    </tr>
+                <?php }?>
+                </table>
+            </div>
+        </div>
+        <div class="col-xs-6">
+            <?php generate_pie_graph_html($data_pie); ?>
+        </div>
+    </div>
+    <?php
     /* Build and draw the graphs */
-    $data1 = build_percentage_data($month_genre_stats, $genre_list);
-    $data2 = build_cumulative_data($month_genre_stats, $genre_list);
-    $data3 = build_line_data($month_genre_stats, $genre_list);
+    $data_percentage = build_percentage_data($month_genre_stats, $historic_genre_list);
+    $data_cumulative = build_cumulative_data($month_genre_stats, $historic_genre_list);
+    $data_line = build_line_data($month_genre_stats, $historic_genre_list);
     ?>
     <hr>
-    <h2><b>HistoricalGraphs</b></h2>
+    <h2><b>Historical Graphs</b></h2>
     These graphs show the distribution of what genre of songs you have been adding to the playlist each month.
     <ul class="nav nav-tabs">
         <li class="active">
@@ -194,13 +240,13 @@ function print_data(){
     </ul>
     <div id="graphTabs" class="tab-content">
         <div class="tab-pane fade active in" id="graph1">
-            <?php generate_solid_line_graph_html(1, $data1, $genre_list); ?>
+            <?php generate_solid_line_graph_html($data_percentage, $historic_genre_list); ?>
         </div>
         <div class="tab-pane fade in" id="graph2">
-            <?php generate_solid_line_graph_html(2, $data2, $genre_list); ?>
+            <?php generate_solid_line_graph_html($data_cumulative, $historic_genre_list); ?>
         </div>
         <div class="tab-pane fade in" id="graph3">
-            <?php generate_line_graph_html(3, $data3, $genre_list); ?>
+            <?php generate_line_graph_html($data_line, $historic_genre_list); ?>
         </div>
     </div>
     

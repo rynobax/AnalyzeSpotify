@@ -77,6 +77,21 @@ function generate_genre_list(&$month_genre_stats, $count_cutoff, $genre_count) {
     return $genre_list;
 }
 
+function build_pie_data($genre_count, $cutoff){
+    $data = array();
+    foreach ($genre_count as $genre => $count) {
+        if($count > $cutoff){
+            $data[$genre] = $count;
+        }else{
+            if(!isset($data["Other"])){
+                $data["Other"] = 0;
+            }
+            $data["Other"] += $count;
+        }
+    }
+    return $data;
+}
+
 function build_percentage_data($month_genre_stats, $genre_list) {
     $data = array();
     $genre_totals = array();
@@ -142,9 +157,66 @@ function build_line_data($month_genre_stats, $genre_list) {
     return $data;
 }
 
-function generate_solid_line_graph_html($graph_num, $data, $genre_list) {
-    $graph_name = "myChart" . $graph_num;
-    $colors = generate_n_distinct_colors(count($data));
+function generate_pie_graph_html($genre_count) {
+    if(isset($GLOBALS["graph_num"])){
+        $graph_num = $GLOBALS["graph_num"]++;
+    }else{
+        $GLOBALS["graph_num"] = 0;
+        $graph_num = $GLOBALS["graph_num"];
+    }
+
+    $graph_name = "Pie Graph" . $graph_num;
+    $color_count = count($genre_count);
+    if(isset($genre_count["NO_TAGS"])){
+        $color_count -= 1;
+    }
+    ?>
+    <canvas id="<?php echo $graph_name ?>" width="400" height="400"></canvas>
+    <script>
+        var ctx = document.getElementById("<?php echo $graph_name ?>");
+        var data = {
+            labels: [<?php
+    foreach ($genre_count as $genre => $count) {
+        echo '"' . ucwords($genre) . '", ';
+    }
+    ?>],
+            datasets: [
+    <?php
+        echo "{\n";
+        //echo "\t\tlabel: " . "'" . ucwords($genre) . "',\n";
+        echo "\t\tbackgroundColor : [";
+        foreach ($genre_count as $genre => $count) {
+            $color = $GLOBALS["colors"][$genre];
+            echo "\t\t\t\"rgba(" . $color['r'] . "," . $color['g'] . "," . $color['b'] . ",1)\",\n";
+        }
+        echo "],";
+        echo "\t\tdata :[";
+        foreach ($genre_count as $genre => $count) {
+            echo $count.", ";
+        }
+        echo "]\n";
+        echo "\t},";
+    ?>
+            ]
+        }
+
+        var myPieChart = new Chart(ctx, {
+            type: 'pie',
+            data: data
+        });
+    </script>
+    <?php
+}
+
+function generate_solid_line_graph_html($data, $genre_list) {
+    if(isset($GLOBALS["graph_num"])){
+        $graph_num = $GLOBALS["graph_num"]++;
+    }else{
+        $GLOBALS["graph_num"] = 0;
+        $graph_num = $GLOBALS["graph_num"];
+    }
+
+    $graph_name = "Solid Line Graph" . $graph_num;
     ?>
     <canvas id="<?php echo $graph_name ?>" width="400" height="400"></canvas>
     <script>
@@ -160,7 +232,7 @@ function generate_solid_line_graph_html($graph_num, $data, $genre_list) {
     foreach ($genre_list as $genre => $ignore) {
         echo "{\n";
         echo "\t\tlabel: " . "'" . ucwords($genre) . "',\n";
-        $color = array_pop($colors);
+        $color = $GLOBALS["colors"][$genre];
         echo "\t\tbackgroundColor : \"rgba(" . $color['r'] . "," . $color['g'] . "," . $color['b'] . ",1)\",\n";
         echo "\t\tdata :[";
         foreach ($data[$genre] as $date => $count) {
@@ -203,9 +275,15 @@ function generate_solid_line_graph_html($graph_num, $data, $genre_list) {
     <?php
 }
 
-function generate_line_graph_html($graph_num, $data, $genre_list) {
-    $graph_name = "myChart" . $graph_num;
-    $colors = generate_n_distinct_colors(count($data));
+function generate_line_graph_html($data, $genre_list) {
+    if(isset($GLOBALS["graph_num"])){
+        $graph_num = $GLOBALS["graph_num"]++;
+    }else{
+        $GLOBALS["graph_num"] = 0;
+        $graph_num = $GLOBALS["graph_num"];
+    }
+
+    $graph_name = "Line Graph" . $graph_num;
     ?>
     <canvas id="<?php echo $graph_name ?>" width="400" height="400"></canvas>
     <script>
@@ -221,7 +299,7 @@ function generate_line_graph_html($graph_num, $data, $genre_list) {
     foreach ($genre_list as $genre => $ignore) {
         echo "{\n";
         echo "\t\tlabel: " . "'" . ucwords($genre) . "',\n";
-        $color = array_pop($colors);
+        $color = $GLOBALS["colors"][$genre];
         echo "\t\tbackgroundColor : \"rgba(" . $color['r'] . "," . $color['g'] . "," . $color['b'] . ",1)\",\n";
         echo "\t\tborderColor : \"rgba(" . $color['r'] . "," . $color['g'] . "," . $color['b'] . ",1)\",\n";
         echo "\t\tfill : false,\n";

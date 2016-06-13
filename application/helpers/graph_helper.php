@@ -12,6 +12,14 @@ function generate_n_distinct_colors($num_colors){
 	return $colors;
 }
 
+function color_print($color){
+    $hex = "#";
+    $hex .= str_pad(dechex(round(($color["r"] + (255 - $color["r"])*.2), 2)), 2, "0", STR_PAD_LEFT);
+    $hex .= str_pad(dechex(round(($color["g"] + (255 - $color["g"])*.2), 2)), 2, "0", STR_PAD_LEFT);
+    $hex .= str_pad(dechex(round(($color["b"] + (255 - $color["b"])*.2), 2)), 2, "0", STR_PAD_LEFT);
+    echo $hex;
+}
+
 function ColorHSLToRGB($h, $s, $l){
 	//http://stackoverflow.com/questions/20423641/php-function-to-convert-hsl-to-rgb-or-hex
 		$h /= 360;
