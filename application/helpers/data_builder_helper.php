@@ -216,7 +216,7 @@ function generate_solid_line_graph_html($data, $genre_list) {
         $graph_num = $GLOBALS["graph_num"];
     }
 
-    $graph_name = "Solid Line Graph" . $graph_num;
+    $graph_name = "historic-graph" . $graph_num;
     ?>
     <canvas id="<?php echo $graph_name ?>" width="400" height="400"></canvas>
     <script>
@@ -283,7 +283,7 @@ function generate_line_graph_html($data, $genre_list) {
         $graph_num = $GLOBALS["graph_num"];
     }
 
-    $graph_name = "Line Graph" . $graph_num;
+    $graph_name = "historic-graph" . $graph_num;
     ?>
     <canvas id="<?php echo $graph_name ?>" width="400" height="400"></canvas>
     <script>

@@ -36,8 +36,27 @@ function print_data(){
     $api = new SpotifyWebAPI\SpotifyWebAPI();
     $api->setAccessToken($_SESSION["token"]);
 
-    echo "<h1><b>".$playlistname."</b></h1>";
-    echo "<hr size=>";
+    if(isset($_ENV["SERVER_NAME"])){
+        $base = "/";
+    }else{
+        $base = base_url();
+    } 
+    ?>
+    <div class="row">
+        <div class="col-sm-1">
+
+            <a href="<?php echo $base.'index.php/pages/view/pick_playlist' ?>" class="btn btn-success">
+              <span class="glyphicon glyphicon-log-out"></span>
+            </a>
+        </div>
+        <div class="col-sm-10">
+            <h1><b><?php echo $playlistname ?></b></h1>
+        </div>
+        <div class="col-sm-1">
+        </div>
+    </div>
+    <hr>
+    <?php
     timer_starts();
     /* Gets playlist songs */
     $limit_fields = array('total,limit');
