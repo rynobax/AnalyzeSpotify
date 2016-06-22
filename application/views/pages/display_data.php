@@ -46,7 +46,7 @@ function print_data(){
         <div class="col-sm-1">
 
             <a href="<?php echo $base.'index.php/pages/view/pick_playlist' ?>" class="btn btn-success">
-              <span class="glyphicon glyphicon-log-out"></span>
+              <span class="glyphicon glyphicon-new-window"></span>
             </a>
         </div>
         <div class="col-sm-10">

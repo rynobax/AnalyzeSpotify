@@ -42,7 +42,7 @@ if(isset($_POST["logout"])) {
 	<br>
 	<br>
 	<button type="submit" form="dummy_login" value="Submit" class="btn btn-default btn-lg">
-		<div class="button-text">Use Dummy Playlist</div>
+		<div class="button-text">Use Dummy Playlist<br>(No Login Required)</div>
 	</button>
 	</div>
 </div>
