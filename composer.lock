@@ -1,11 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "hash": "e27e3b27e4288e4d2cb3317cff4b2361",
-    "content-hash": "0ab8f9b7020a799970e5c273781ef5fd",
+    "content-hash": "08de9b131064e8311abf76f9e1c38344",
     "packages": [
         {
             "name": "jwilsson/spotify-web-api-php",
@@ -51,21 +50,25 @@
             "keywords": [
                 "spotify"
             ],
-            "time": "2016-04-03 13:03:17"
+            "support": {
+                "issues": "https://github.com/jwilsson/spotify-web-api-php/issues",
+                "source": "https://github.com/jwilsson/spotify-web-api-php/tree/master"
+            },
+            "time": "2016-04-03T13:03:17+00:00"
         }
     ],
     "packages-dev": [
         {
-            "name": "mikey179/vfsStream",
+            "name": "mikey179/vfsstream",
             "version": "v1.1.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/mikey179/vfsStream.git",
+                "url": "https://github.com/bovigo/vfsStream.git",
                 "reference": "fc0fe8f4d0b527254a2dc45f0c265567c881d07e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mikey179/vfsStream/zipball/fc0fe8f4d0b527254a2dc45f0c265567c881d07e",
+                "url": "https://api.github.com/repos/bovigo/vfsStream/zipball/fc0fe8f4d0b527254a2dc45f0c265567c881d07e",
                 "reference": "fc0fe8f4d0b527254a2dc45f0c265567c881d07e",
                 "shasum": ""
             },
@@ -83,7 +86,11 @@
                 "BSD"
             ],
             "homepage": "http://vfs.bovigo.org/",
-            "time": "2012-08-25 12:49:29"
+            "support": {
+                "issues": "https://github.com/bovigo/vfsStream/issues",
+                "source": "https://github.com/bovigo/vfsStream/tree/v1.1.0"
+            },
+            "time": "2012-08-25T12:49:29+00:00"
         }
     ],
     "aliases": [],
@@ -94,5 +101,6 @@
     "platform": {
         "php": ">=5.2.4"
     },
-    "platform-dev": []
+    "platform-dev": [],
+    "plugin-api-version": "2.3.0"
 }
