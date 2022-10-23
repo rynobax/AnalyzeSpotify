@@ -14,9 +14,9 @@ function generate_n_distinct_colors($num_colors){
 
 function color_print($color){
     $hex = "#";
-    $hex .= str_pad(dechex(round(($color["r"] + (255 - $color["r"])*.2), 2)), 2, "0", STR_PAD_LEFT);
-    $hex .= str_pad(dechex(round(($color["g"] + (255 - $color["g"])*.2), 2)), 2, "0", STR_PAD_LEFT);
-    $hex .= str_pad(dechex(round(($color["b"] + (255 - $color["b"])*.2), 2)), 2, "0", STR_PAD_LEFT);
+    $hex .= str_pad(dechex(round(($color["r"] + (255.0 - $color["r"])*.2), 2)), 2, "0", STR_PAD_LEFT);
+    $hex .= str_pad(dechex(round(($color["g"] + (255.0 - $color["g"])*.2), 2)), 2, "0", STR_PAD_LEFT);
+    $hex .= str_pad(dechex(round(($color["b"] + (255.0 - $color["b"])*.2), 2)), 2, "0", STR_PAD_LEFT);
     echo $hex;
 }
 
